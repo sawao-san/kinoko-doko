@@ -1,14 +1,13 @@
 # dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.js
 
-# next.js
-/.next/
-/out/
-
-# production
-/build
+# build outputs
+.next/
+out/
+build/
+dist/
 
 # misc
 .DS_Store
@@ -28,6 +27,8 @@ yarn-error.log*
 
 # local archive / duplicate folder
 /Nagano Mind/
+/feynman-board/
+/.agents/
 Nagano_Mind.zip
 public/Nagano-Mind.zip
 public/Nagano-Mind.tar.gz

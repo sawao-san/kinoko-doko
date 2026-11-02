@@ -1,0 +1,6 @@
+{
+  "name": "たべれるキノコマップ (Edible Mushroom Map)",
+  "description": "散歩ルートで見つけたキノコをGPS地図上に記録し、Gemini AIで可食・毒・豆知識を瞬時に鑑定するマップアプリ",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
