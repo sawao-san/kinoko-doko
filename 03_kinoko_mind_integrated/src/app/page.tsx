@@ -2880,14 +2880,6 @@ export default function Home() {
                   </div>
                 </div>
               )}
-                    </div>
-                    <p className="text-xs text-amber-950 leading-relaxed">
-                      {result?.drawingEvaluation?.comment ||
-                        "左のキャンバスに描かれたキノコの傘・柄・周囲の生態構造をもとに、信州の森林環境における実物ビジュアルを生成しました。"}
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         )}
