@@ -265,6 +265,19 @@ export async function POST(req: Request) {
     const apiKey = process.env.GEMINI_API_KEY;
     const base64Data = imageBase64 ? imageBase64.replace(/^data:image\/\w+;base64,/, "") : null;
 
+    // キノコ名で直接実物写真を検索する場合
+    if (action === "search_mushroom" || body.mushroomName) {
+      const q = (body.mushroomName || topic || "").trim();
+      const searchImgData = await fetchMushroomSearchImages(q);
+      return NextResponse.json({
+        mushroomName: q,
+        searchImages: searchImgData.searchImages,
+        wikiUrl: searchImgData.wikiUrl,
+        wikiExtract: searchImgData.wikiExtract,
+        selectedImage: searchImgData.searchImages[0]?.url || createFallbackMushroomSvgDataUrl(q, q),
+      });
+    }
+
     // 単独で「Nano Banana画像生成のみ」リクエストされた場合
     if (action === "generate_image") {
       if (!apiKey) {

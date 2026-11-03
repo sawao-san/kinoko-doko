@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
-  title: "Feynman Board | ファインマン黒板 - 3分で人に教えて理解する",
-  description: "AI時代の能動的アウトプット学習支援プラットフォーム。自分で調べ、ホワイトボードで図解し、声で教える。AI赤ペン先生があなたの理解度を瞬時にフィードバック。",
+  title: "🍄 信州キノコ専門家黒板 (Nagano Mind) × キノコどこどこ",
+  description: "AI時代の能動的アウトプット学習支援プラットフォーム。キノコをホワイトボードで図解し、声で教える。説明したキノコの実物検索写真や原田さんのキノコマップと合体連携。",
 };
 
 export default function RootLayout({
