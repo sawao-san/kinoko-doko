@@ -37,6 +37,7 @@ import {
   Columns,
   Eye,
   CheckCircle2,
+  Search,
 } from "lucide-react";
 
 const PRESET_TOPICS = [
