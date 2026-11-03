@@ -1604,8 +1604,9 @@ export default function Home() {
         .filter(Boolean)
         .join(" ➔ ");
 
+      const effectiveTopic = topic || "信州のキノコ生態図解";
       const combinedTranscript = `
-【お題】: ${topic}
+【お題】: ${effectiveTopic}
 【専門家の説明】: ${transcript || "（音声なし）"}
 【ホワイトボードの図解構造】: ${structureDescription || "（手書きスケッチ中心）"}
       `.trim();
@@ -1614,7 +1615,7 @@ export default function Home() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          topic,
+          topic: effectiveTopic,
           transcript: combinedTranscript,
           imageBase64,
         }),
@@ -1626,6 +1627,15 @@ export default function Home() {
       }
 
       setResult(data);
+      if (data.mushroomName) {
+        setSearchedMushroomName(data.mushroomName);
+      }
+      if (data.searchImages && data.searchImages.length > 0) {
+        setSearchedImages(data.searchImages);
+        setSelectedSearchImg(data.searchImages[0].url);
+        setSearchedWikiExtract(data.wikiExtract || "");
+        setSearchedWikiUrl(data.wikiUrl || "");
+      }
       if (data.recommendedFolder) {
         setSaveFolder(data.recommendedFolder);
       }
@@ -1637,7 +1647,7 @@ export default function Home() {
       alert(`評価エラー: ${err.message || "通信に失敗しました"}`);
     } finally {
       setIsEvaluating(false);
-      setIsGeneratingBanana(false);
+      setIsSearchingMushroom(false);
     }
   };
 
