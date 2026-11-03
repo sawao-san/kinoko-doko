@@ -1861,52 +1861,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* お題選択バー */}
-      <div className="flex items-center justify-between px-4 py-1.5 bg-white border-b border-slate-200 text-xs overflow-x-auto shrink-0">
-        <div className="flex items-center gap-2 flex-1">
-          <span className="font-bold text-slate-700 whitespace-nowrap flex items-center gap-1">
-            <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
-            テーマ:
-          </span>
-          <input
-            type="text"
-            value={topic}
-            onChange={(e) => setTopic(e.target.value)}
-            placeholder="解説したいキノコのテーマ..."
-            className="w-64 px-2.5 py-1 rounded-lg border border-slate-300 font-semibold text-slate-800 text-xs"
-          />
-          <div className="flex items-center gap-1 overflow-x-auto">
-            {PRESET_TOPICS.map((preset) => (
-              <button
-                key={preset}
-                onClick={() => {
-                  setTopic(preset);
-                  setTimeLeft(180);
-                  setIsTimerRunning(false);
-                }}
-                className={`px-2.5 py-0.5 rounded-full whitespace-nowrap text-[11px] transition-all ${
-                  topic === preset
-                    ? "bg-emerald-600 text-white font-semibold"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
-              >
-                {preset}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-1.5 pl-3 border-l border-slate-200 shrink-0">
-          <span className="text-slate-500 text-[11px]">解説者:</span>
-          <input
-            type="text"
-            value={authorName}
-            onChange={(e) => setAuthorName(e.target.value)}
-            className="w-36 px-2 py-0.5 rounded border border-slate-300 text-slate-700 text-[11px] font-medium"
-          />
-        </div>
-      </div>
-
       {/* 知識資産フォルダギャラリー（モーダル） */}
       {showGallery && (
         <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-6">
@@ -2030,7 +1984,20 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={handleEvaluate}
+                      disabled={isEvaluating}
+                      className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-extrabold text-white transition-all shadow-xs shrink-0 ${
+                        isEvaluating
+                          ? "bg-slate-400 cursor-not-allowed"
+                          : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
+                      }`}
+                      title="ノートの絵と説明を評価し、実物写真を検索"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                      {isEvaluating ? "評価中..." : "説明を評価 ＆ 検索"}
+                    </button>
                     <button
                       onClick={handleAddMushroomSketch}
                       className="flex items-center gap-1 px-2 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 rounded-lg text-[11px] font-bold transition-all"
@@ -2886,7 +2853,7 @@ export default function Home() {
         )}
 
         {/* -----------------------------------------------------------------
-            【一番右】Google Maps でキノコがどこにあるか表示 (Right Pane - チーム統合)
+            【一番右】原田さんの「キノコどこどこ」生息地マップ (Right Pane)
            ----------------------------------------------------------------- */}
         {(maximizedPane === "none" || maximizedPane === "right") && (
           <div
@@ -2895,55 +2862,31 @@ export default function Home() {
             }`}
           >
             {/* 右ペインヘッダー */}
-            <div className="flex items-center justify-between px-3 py-2 border-b border-slate-200 bg-gradient-to-r from-emerald-50/80 via-teal-50/50 to-white shrink-0">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-slate-200 bg-white shrink-0">
               <div className="flex items-center gap-2">
-                <span className="w-6 h-6 rounded-lg bg-rose-600 text-white flex items-center justify-center text-xs font-bold shadow-2xs">
-                  <MapPin className="w-3.5 h-3.5" />
+                <span className="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shadow-2xs">
+                  🍄
                 </span>
                 <div>
                   <h2 className="text-xs font-extrabold text-slate-900 leading-none">
-                    Google Maps キノコ生息地マップ
+                    キノコどこどこ（生息地マップ）
                   </h2>
-                  <span className="text-[10px] text-slate-500">
-                    キノコがどこにあるか表示（チームメンバー機能統合）
-                  </span>
                 </div>
               </div>
 
               <div className="flex items-center gap-1.5">
-                {/* マップ表示切替 */}
-                <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[10px] font-bold">
-                  <button
-                    onClick={() => setMapViewType("google")}
-                    className={`px-2 py-0.5 rounded-md transition-all ${
-                      mapViewType === "google"
-                        ? "bg-white text-emerald-700 shadow-2xs"
-                        : "text-slate-600"
-                    }`}
+                {partnerMapUrl && (
+                  <a
+                    href={partnerMapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 transition-all shadow-2xs"
+                    title="別タブでキノコどこどこを全画面表示"
                   >
-                    Google Map
-                  </button>
-                  <button
-                    onClick={() => setMapViewType("regional")}
-                    className={`px-2 py-0.5 rounded-md transition-all ${
-                      mapViewType === "regional"
-                        ? "bg-white text-emerald-700 shadow-2xs"
-                        : "text-slate-600"
-                    }`}
-                  >
-                    長野4地域ガイド
-                  </button>
-                  <button
-                    onClick={() => setMapViewType("partner")}
-                    className={`px-2 py-0.5 rounded-md transition-all ${
-                      mapViewType === "partner"
-                        ? "bg-white text-emerald-700 shadow-2xs"
-                        : "text-slate-600"
-                    }`}
-                  >
-                    🍄 原田さんのキノコどこどこ
-                  </button>
-                </div>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>別タブ全画面</span>
+                  </a>
+                )}
 
                 <button
                   onClick={() => toggleMaximize("right")}
@@ -2965,290 +2908,17 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 右ペインコンテンツ */}
-            <div className="flex-1 overflow-y-auto p-3 flex flex-col space-y-2.5">
-              {/* 1. Google Maps ライブ表示モード */}
-              {mapViewType === "google" && (
-                <>
-                  {/* インタラクティブ Google Map (選択中のピン座標にリアルタイム連動) */}
-                  <div
-                    className={`relative w-full rounded-xl overflow-hidden border border-slate-300 shadow-xs bg-slate-900 ${
-                      maximizedPane === "right" ? "h-[52vh]" : "h-56"
-                    }`}
-                  >
-                    {selectedPin ? (
-                      <iframe
-                        title="Google Maps Mushroom Habitat"
-                        width="100%"
-                        height="100%"
-                        style={{ border: 0 }}
-                        loading="lazy"
-                        allowFullScreen
-                        referrerPolicy="no-referrer-when-downgrade"
-                        src={`https://maps.google.com/maps?q=${selectedPin.lat},${selectedPin.lng}+(${encodeURIComponent(
-                          selectedPin.name
-                        )})&t=k&z=12&ie=UTF8&iwloc=B&output=embed`}
-                      />
-                    ) : (
-                      <iframe
-                        title="Google Maps Nagano"
-                        width="100%"
-                        height="100%"
-                        style={{ border: 0 }}
-                        loading="lazy"
-                        src="https://maps.google.com/maps?q=36.2048,138.1812+(長野県キノコ生息マップ)&t=k&z=8&ie=UTF8&output=embed"
-                      />
-                    )}
-
-                    {/* マップ上のオーバーレイバッジ */}
-                    <div className="absolute top-2 left-2 z-10 flex items-center gap-1.5 bg-slate-900/85 backdrop-blur-xs text-white px-2.5 py-1 rounded-full text-[11px] font-bold border border-white/15">
-                      <Compass className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>
-                        {selectedPin ? `📍 ${selectedPin.name}` : "長野県キノコ生息マップ"}
-                      </span>
-                    </div>
-
-                    {selectedPin && (
-                      <a
-                        href={`https://www.google.com/maps/search/?api=1&query=${selectedPin.lat},${selectedPin.lng}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="absolute bottom-2 right-2 z-10 flex items-center gap-1 bg-white/95 hover:bg-white text-slate-900 px-2.5 py-1 rounded-lg text-[10px] font-extrabold shadow-md border border-slate-200"
-                      >
-                        Google Maps アプリで開く
-                        <ExternalLink className="w-3 h-3 text-emerald-600" />
-                      </a>
-                    )}
-                  </div>
-
-                  {/* 特定された生息地ピン切り替えチップ（クリックでGoogle MapがFlyTo移動） */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-extrabold text-slate-800 flex items-center gap-1">
-                        📍 生息地ピン一覧（クリックでGoogle Map移動）
-                      </span>
-                      <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                        {activeLocations.length} スポット特定
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-1.5">
-                      {activeLocations.map((loc, idx) => {
-                        const isSelected = selectedPin?.name === loc.name;
-                        return (
-                          <button
-                            key={idx}
-                            onClick={() => setSelectedPin(loc)}
-                            className={`w-full text-left p-2.5 rounded-xl border transition-all flex items-start justify-between gap-2 ${
-                              isSelected
-                                ? "bg-emerald-50/90 border-emerald-500 ring-1 ring-emerald-500 shadow-2xs"
-                                : "bg-white hover:bg-slate-50 border-slate-200"
-                            }`}
-                          >
-                            <div className="space-y-0.5">
-                              <div className="flex items-center gap-1.5">
-                                <span
-                                  className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
-                                    isSelected
-                                      ? "bg-emerald-600 text-white"
-                                      : "bg-slate-100 text-slate-700"
-                                  }`}
-                                >
-                                  {loc.area}
-                                </span>
-                                <span className="font-bold text-xs text-slate-900">
-                                  {loc.name}
-                                </span>
-                              </div>
-                              <p className="text-[11px] text-slate-600 line-clamp-2">
-                                {loc.description}
-                              </p>
-                              <div className="flex items-center gap-2 text-[10px] text-slate-500 pt-0.5">
-                                <span>⛰️ {loc.altitude}</span>
-                                <span>🌲 {loc.treeType}</span>
-                                {loc.season && <span>🗓️ {loc.season}</span>}
-                              </div>
-                            </div>
-
-                            {loc.probability && (
-                              <span className="shrink-0 text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
-                                {loc.probability}
-                              </span>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {/* 2. 長野県4地域（北信・東信・中信・南信）生息まとめモード */}
-              {mapViewType === "regional" && (
-                <div className="space-y-2.5">
-                  <div className="p-3 bg-emerald-950 text-white rounded-xl space-y-1.5">
-                    <div className="text-xs font-extrabold text-emerald-300 flex items-center gap-1.5">
-                      <Trees className="w-4 h-4" />
-                      長野県内の生息環境まとめ（{result?.mushroomName || "信州キノコ"}）
-                    </div>
-                    <p className="text-xs text-emerald-50 leading-relaxed">
-                      {result?.naganoHabitatSummary?.overview ||
-                        "長野県は標高差が大きく、北信のブナ林から東信・南信のアカマツ林まで多様な森林生態系が広がる日本有数のキノコ生息地です。"}
-                    </p>
-                    <div className="grid grid-cols-2 gap-2 pt-1 text-[11px]">
-                      <div className="bg-white/10 p-2 rounded-lg">
-                        <span className="text-emerald-300 block text-[10px] font-bold">
-                          🗓️ ベスト発生時期
-                        </span>
-                        {result?.naganoHabitatSummary?.bestSeason ||
-                          "9月中旬〜10月下旬（秋雨後）"}
-                      </div>
-                      <div className="bg-white/10 p-2 rounded-lg">
-                        <span className="text-emerald-300 block text-[10px] font-bold">
-                          🌲 好む森林・標高
-                        </span>
-                        {result?.naganoHabitatSummary?.preferredEnvironment ||
-                          "標高600〜1,200m アカマツ・混交林"}
-                      </div>
-                    </div>
-                  </div>
-
-                  {result?.naganoHabitatSummary?.regionalGuide && (
-                    <div className="grid grid-cols-1 gap-2">
-                      <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-                        <strong className="text-emerald-800 block mb-0.5">
-                          ❄️ 北信エリア（黒姫・戸隠・志賀高原）
-                        </strong>
-                        {result.naganoHabitatSummary.regionalGuide.hokushin}
-                      </div>
-                      <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-                        <strong className="text-emerald-800 block mb-0.5">
-                          ☀️ 東信エリア（上田・真田・佐久・軽井沢）
-                        </strong>
-                        {result.naganoHabitatSummary.regionalGuide.toshin}
-                      </div>
-                      <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-                        <strong className="text-emerald-800 block mb-0.5">
-                          ⛰️ 中信エリア（松本・四賀・安曇野・乗鞍）
-                        </strong>
-                        {result.naganoHabitatSummary.regionalGuide.chushin}
-                      </div>
-                      <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-                        <strong className="text-emerald-800 block mb-0.5">
-                          🌲 南信エリア（伊那谷・木曽・豊丘・喬木）
-                        </strong>
-                        {result.naganoHabitatSummary.regionalGuide.nanshin}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* 3. 原田さんのキノコどこどこ（成果物アプリ直接埋め込み・合体モード） */}
-              {mapViewType === "partner" && (
-                <div className="flex-1 flex flex-col space-y-2.5">
-                  <div className="p-2.5 bg-emerald-50/80 border border-emerald-200 rounded-xl space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs font-bold text-emerald-950 flex items-center gap-1.5">
-                        <span>🍄</span>
-                        <span>原田さんのキノコマップ（キノコどこどこ）と合体中:</span>
-                      </label>
-                      {partnerMapUrl && (
-                        <a
-                          href={partnerMapUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[10px] font-bold text-emerald-800 hover:text-emerald-950 bg-white px-2 py-0.5 rounded border border-emerald-300 flex items-center gap-1 transition-all"
-                        >
-                          <ExternalLink className="w-2.5 h-2.5" />
-                          別タブで全画面表示
-                        </a>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <input
-                        type="text"
-                        value={partnerMapUrl}
-                        onChange={(e) => setPartnerMapUrl(e.target.value)}
-                        placeholder="https://harada-mushroom-map-hlslgpaxaq-an.a.run.app"
-                        className="flex-1 px-2.5 py-1 text-xs bg-white rounded-lg border border-emerald-300 font-medium text-slate-800"
-                      />
-                      <button
-                        onClick={() =>
-                          setPartnerMapUrl(
-                            "https://harada-mushroom-map-hlslgpaxaq-an.a.run.app"
-                          )
-                        }
-                        className={`px-2 py-1 rounded-lg text-[10px] font-bold shrink-0 transition-all ${
-                          partnerMapUrl.includes("run.app")
-                            ? "bg-emerald-600 text-white shadow-xs"
-                            : "bg-white hover:bg-emerald-100 text-emerald-800 border border-emerald-300"
-                        }`}
-                      >
-                        本番(Cloud Run)
-                      </button>
-                      <button
-                        onClick={() => setPartnerMapUrl("http://localhost:3001")}
-                        className={`px-2 py-1 rounded-lg text-[10px] font-bold shrink-0 transition-all ${
-                          partnerMapUrl.includes("localhost")
-                            ? "bg-emerald-600 text-white shadow-xs"
-                            : "bg-white hover:bg-emerald-100 text-emerald-800 border border-emerald-300"
-                        }`}
-                      >
-                        ローカル(3001)
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="flex-1 min-h-[300px] rounded-xl border border-slate-300 overflow-hidden bg-slate-100 flex flex-col">
-                    {partnerMapUrl ? (
-                      <iframe
-                        src={partnerMapUrl}
-                        title="Harada-san Kinoko Dokodoko Map"
-                        className="w-full h-full border-0 flex-1 min-h-[320px]"
-                        allow="geolocation; camera; microphone"
-                      />
-                    ) : (
-                      <div className="text-center p-6 text-slate-500 space-y-2 flex-1 flex flex-col items-center justify-center">
-                        <MapPin className="w-8 h-8 text-emerald-600 mx-auto" />
-                        <p className="text-xs font-bold text-slate-700">
-                          原田さんの「キノコどこどこ」URLを設定するとここに直接合体表示されます
-                        </p>
-                        <p className="text-[11px] text-slate-400">
-                          ローカル検証時はポート3001で起動するか、デプロイ先URLを指定してください
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* 右ペイン下部：チームメンバーのGoogle Map連携用データ出力 */}
-              <div className="pt-1 mt-auto border-t border-slate-100">
-                <button
-                  onClick={handleCopyPartnerMapJson}
-                  className={`w-full py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs ${
-                    copiedMapJson
-                      ? "bg-emerald-600 text-white"
-                      : "bg-slate-800 hover:bg-slate-900 text-white"
-                  }`}
-                >
-                  {copiedMapJson ? (
-                    <>
-                      <CheckCircle2 className="w-4 h-4" />
-                      チームメンバーのGoogle Map連携用JSONをコピーしました！
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" />
-                      チームメンバーのGoogle Map連携用JSONをコピー
-                    </>
-                  )}
-                </button>
-              </div>
+            {/* 右ペインコンテンツ: 3画面時は余分なUIを排除しマップのみ100%表示 */}
+            <div className="flex-1 w-full h-full overflow-hidden bg-slate-900 relative">
+              <iframe
+                src={partnerMapUrl}
+                title="Harada-san Kinoko Dokodoko Map"
+                className="w-full h-full border-0 absolute inset-0"
+                allow="geolocation; camera; microphone"
+              />
             </div>
           </div>
-        )}
+                )}
       </div>
     </div>
   );
